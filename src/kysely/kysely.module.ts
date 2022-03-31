@@ -22,7 +22,7 @@ import {
       provide: KYSELY_TOKEN,
       inject: [getKyselyOptionsToken()],
       useFactory: async (options: PostgresDialectConfig) => {
-        new Kysely({
+        return new Kysely({
           dialect: new PostgresDialect(options),
         });
       },
