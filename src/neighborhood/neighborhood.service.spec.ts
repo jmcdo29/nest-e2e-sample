@@ -1,18 +1,29 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { suite } from 'uvu';
+import { ok } from 'uvu/assert';
+
 import { NeighborhoodService } from './neighborhood.service';
+import { getKyselyToken } from '../kysely/kysely.constants';
 
-describe('NeighborhoodService', () => {
-  let service: NeighborhoodService;
+const NeighborhoodServiceSuite = suite<{ service: NeighborhoodService }>(
+  'NeighborhoodService Suite',
+);
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [NeighborhoodService],
-    }).compile();
-
-    service = module.get<NeighborhoodService>(NeighborhoodService);
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+NeighborhoodServiceSuite.before(async (context) => {
+  const app = await Test.createTestingModule({
+    providers: [
+      NeighborhoodService,
+      {
+        provide: getKyselyToken(),
+        useValue: {},
+      },
+    ],
+  }).compile();
+  context.service = app.get(NeighborhoodService);
 });
+
+NeighborhoodServiceSuite('service should exist', ({ service }) => {
+  ok(service);
+});
+
+NeighborhoodServiceSuite.run();

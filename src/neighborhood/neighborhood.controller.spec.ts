@@ -1,18 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { suite } from 'uvu';
+import { ok } from 'uvu/assert';
+
 import { NeighborhoodController } from './neighborhood.controller';
+import { NeighborhoodService } from './neighborhood.service';
 
-describe('NeighborhoodController', () => {
-  let controller: NeighborhoodController;
+const NeighborhoodControllerSuite = suite<{
+  controller: NeighborhoodController;
+}>('NeighborhoodController Suite');
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [NeighborhoodController],
-    }).compile();
+NeighborhoodControllerSuite.before(async (context) => {
+  const module: TestingModule = await Test.createTestingModule({
+    controllers: [NeighborhoodController],
+    providers: [
+      {
+        provide: NeighborhoodService,
+        useValue: {},
+      },
+    ],
+  }).compile();
 
-    controller = module.get<NeighborhoodController>(NeighborhoodController);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+  context.controller = module.get<NeighborhoodController>(
+    NeighborhoodController,
+  );
 });
+NeighborhoodControllerSuite('controller exists', ({ controller }) => {
+  ok(controller);
+});
+
+NeighborhoodControllerSuite.run();
