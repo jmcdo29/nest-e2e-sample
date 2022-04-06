@@ -13,6 +13,13 @@ export interface Neighborhood {
   location: Location;
 }
 
+export interface Family {
+  name: string;
+  id: Generated<string>;
+  neighborhood_id: string;
+}
+
 export interface Database {
   neighborhood: Neighborhood;
+  family: Family;
 }
