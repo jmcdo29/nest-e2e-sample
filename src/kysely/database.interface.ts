@@ -7,6 +7,12 @@ export enum Location {
   E = 'E',
 }
 
+export enum FamilyRole {
+  mother = 'mother',
+  father = 'father',
+  child = 'child',
+}
+
 export interface Neighborhood {
   name: string;
   id: Generated<string>;
@@ -19,7 +25,15 @@ export interface Family {
   neighborhood_id: string;
 }
 
+export interface Person {
+  name: string;
+  id: Generated<string>;
+  role: FamilyRole;
+  family_id: string;
+}
+
 export interface Database {
   neighborhood: Neighborhood;
   family: Family;
+  person: Person;
 }
