@@ -6,15 +6,28 @@ import {
 } from 'kysely';
 import { join } from 'path';
 
+const dbByEnv = {
+  development: {
+    host: 'localhost',
+    database: 'postgres',
+    user: 'postgres',
+    password: 'postgres',
+    port: 25432,
+  },
+  test: {
+    host: 'localhost',
+    database: 'test',
+    user: 'postgres',
+    password: 'postgres',
+    port: 35432,
+  },
+};
+console.log(dbByEnv[process.env.NODE_ENV]);
 async function migrate() {
   const db = new Kysely<any>({
-    dialect: new PostgresDialect({
-      host: 'localhost',
-      database: 'postgres',
-      user: 'postgres',
-      password: 'postgres',
-      port: 25432,
-    }),
+    dialect: new PostgresDialect(
+      dbByEnv[process.env.NODE_ENV ?? 'development'],
+    ),
   });
 
   const migrator = new Migrator({

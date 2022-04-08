@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleDestroy } from '@nestjs/common';
 import { Kysely, PostgresDialect, PostgresDialectConfig } from 'kysely';
 import {
   getKyselyOptionsToken,
+  InjectKysely,
   KYSELY_OPTIONS_TOKEN,
   KYSELY_TOKEN,
 } from './kysely.constants';
@@ -30,4 +31,10 @@ import {
   ],
   exports: [KYSELY_TOKEN],
 })
-export class KyselyModule {}
+export class KyselyModule implements OnModuleDestroy {
+  constructor(@InjectKysely() private readonly db: Kysely<any>) {}
+
+  async onModuleDestroy() {
+    await this.db.destroy();
+  }
+}
