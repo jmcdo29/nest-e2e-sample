@@ -1,8 +1,9 @@
 import { handler } from 'pactum';
+import { NeighborhoodConstants } from '../../constants';
 
-handler.addSpecHandler('Neighborhood:Delete', ({ spec, data }) => {
+handler.addSpecHandler(NeighborhoodConstants.specs.delete, ({ spec, data }) => {
   spec
-    .delete('/neighborhood/{id}')
+    .delete(`${NeighborhoodConstants.baseRoute}/{id}`)
     .withPathParams({ id: data.id })
     .expectStatus(200)
     .expectBody({ success: true });

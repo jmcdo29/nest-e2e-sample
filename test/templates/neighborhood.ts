@@ -1,7 +1,8 @@
 import { stash } from 'pactum';
+import { NeighborhoodConstants } from '../constants';
 
 stash.addDataTemplate({
-  'Neighborhood.New': {
+  [NeighborhoodConstants.templates.new]: {
     name: 'Test Neighborhood',
     location: 'N',
   },

@@ -1,12 +1,13 @@
 import { handler } from 'pactum';
+import { NeighborhoodConstants, override, template } from '../../constants';
 
-handler.addSpecHandler('Neighborhood:Add', ({ spec, data }) => {
+handler.addSpecHandler(NeighborhoodConstants.specs.add, ({ spec, data }) => {
   spec
-    .post('/neighborhood')
+    .post(NeighborhoodConstants.baseRoute)
     .withJson({
-      '@DATA:TEMPLATE@': 'Neighborhood.New',
-      ...(data?.overrides ?? {}),
+      [template]: NeighborhoodConstants.templates.new,
+      ...(data?.overrides ? { [override]: data.overrides } : {}),
     })
     .expectStatus(201)
-    .stores(`${data?.key ?? ''}NeighborhoodID`, '.id');
+    .stores(`${data?.key ?? ''}${NeighborhoodConstants.keys.id}`, '.id');
 });

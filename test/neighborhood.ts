@@ -1,26 +1,31 @@
 import { e2e } from 'pactum';
 import E2E from 'pactum/src/models/E2E';
 import { suite } from 'uvu';
+import { NeighborhoodConstants, uuidRegex } from './constants';
+
+const route = NeighborhoodConstants.baseRoute;
 
 export const NeighborSuite = suite<{ neighborE2E: E2E }>('Neighborhood E2E', {
   neighborE2E: e2e('Add Neighborhood'),
 });
 NeighborSuite('Create Neighborhood', async ({ neighborE2E }) => {
   const addStep = neighborE2E.step('add');
-  await addStep.spec('Neighborhood:Add').toss();
-  addStep.clean('Neighborhood:Delete', { id: '$S{NeighborhoodID}' });
+  await addStep.spec(NeighborhoodConstants.specs.add).toss();
+  addStep.clean(NeighborhoodConstants.specs.delete, {
+    id: `$S{${NeighborhoodConstants.keys.id}}`,
+  });
 });
 NeighborSuite('Get Neighborhood', async ({ neighborE2E }) => {
   await neighborE2E
     .step('Get Neighborhood')
     .spec()
-    .get('/neighborhood/id/{id}')
-    .withPathParams({ id: '$S{NeighborhoodID}' })
+    .get(`${route}/id/{id}`)
+    .withPathParams({ id: `$S{${NeighborhoodConstants.keys.id}}` })
     .expectStatus(200)
     .expectBody({
       name: 'Test Neighborhood',
       location: 'N',
-      id: '$S{NeighborhoodID}',
+      id: `$S{${NeighborhoodConstants.keys.id}}`,
     })
     .toss();
 });
@@ -28,38 +33,36 @@ NeighborSuite('Get Neighborhood By Name', async ({ neighborE2E }) => {
   await neighborE2E
     .step('Get by name')
     .spec()
-    .get('/neighborhood/name/{name}')
+    .get(`${route}/name/{name}`)
     .withPathParams({ name: 'Test Neighborhood' })
     .expectStatus(200)
     .expectJsonLike({
       name: 'Test Neighborhood',
       location: 'N',
-      id: /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+      id: uuidRegex,
     })
     .toss();
 });
 NeighborSuite('Add another neighborhood', async ({ neighborE2E }) => {
   const anotherNeighborhoodStep = neighborE2E.step('Add Another Neighborhood');
   await anotherNeighborhoodStep
-    .spec('Neighborhood:Add', {
+    .spec(NeighborhoodConstants.specs.add, {
       key: 'Saddleclub',
       overrides: {
-        '@OVERRIDES@': {
-          name: 'Saddleclub',
-          location: 'N',
-        },
+        name: 'Saddleclub',
+        location: 'N',
       },
     })
-    .toss();
-  anotherNeighborhoodStep.clean('Neighborhood:Delete', {
-    id: '$S{SaddleclubNeighborhoodID}',
-  });
+    .toss(),
+    anotherNeighborhoodStep.clean(NeighborhoodConstants.specs.delete, {
+      id: `$S{Saddleclub${NeighborhoodConstants.keys.id}}`,
+    });
 });
 NeighborSuite('Get all Neighborhoods in N', async ({ neighborE2E }) => {
   await neighborE2E
     .step('Get all Neighborhoods in N')
     .spec()
-    .get('/neighborhood/location/N')
+    .get(`${route}/location/N`)
     .expectStatus(200)
     .expectJsonLength(2)
     .expectJsonLike('[*].name', ['Test Neighborhood', 'Saddleclub'])
@@ -69,9 +72,9 @@ NeighborSuite('Update Saddleclub to S', async ({ neighborE2E }) => {
   await neighborE2E
     .step('Update Neighborhood location')
     .spec()
-    .patch('/neighborhood/{id}')
+    .patch(`${route}/{id}`)
     .withJson({ location: 'S' })
-    .withPathParams({ id: '$S{SaddleclubNeighborhoodID}' })
+    .withPathParams({ id: `$S{Saddleclub${NeighborhoodConstants.keys.id}}` })
     .expectStatus(200)
     .toss();
 });
@@ -79,7 +82,7 @@ NeighborSuite('Get all Neighborhoods in N', async ({ neighborE2E }) => {
   await neighborE2E
     .step('Get all Neighborhoods in N')
     .spec()
-    .get('/neighborhood/location/N')
+    .get(`${route}/location/N`)
     .expectStatus(200)
     .expectJsonLength(1)
     .expectJsonLike('[*].name', ['Test Neighborhood'])
@@ -88,5 +91,3 @@ NeighborSuite('Get all Neighborhoods in N', async ({ neighborE2E }) => {
 NeighborSuite('Cleanup', async ({ neighborE2E }) => {
   await neighborE2E.cleanup();
 });
-
-export default NeighborSuite;
