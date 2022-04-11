@@ -12,6 +12,7 @@ import { INestApplication } from '@nestjs/common';
 import { exec as cbExec } from 'child_process';
 import { exec as uvu } from 'uvu';
 import { promisify } from 'util';
+import { FamilySuite } from './family';
 
 const exec = promisify(cbExec);
 
@@ -68,6 +69,7 @@ const runTests = async () => {
   request.setBaseUrl(url.replace('[::1]', 'localhost'));
 
   NeighborSuite.run();
+  FamilySuite.run();
   await uvu();
   await app.close();
 };

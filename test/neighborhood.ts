@@ -1,22 +1,22 @@
-import { e2e } from 'pactum';
+import { e2e as pactumE2E } from 'pactum';
 import E2E from 'pactum/src/models/E2E';
 import { suite } from 'uvu';
 import { NeighborhoodConstants, uuidRegex } from './constants';
 
 const route = NeighborhoodConstants.baseRoute;
 
-export const NeighborSuite = suite<{ neighborE2E: E2E }>('Neighborhood E2E', {
-  neighborE2E: e2e('Add Neighborhood'),
+export const NeighborSuite = suite<{ e2e: E2E }>('Neighborhood E2E', {
+  e2e: pactumE2E('Add Neighborhood'),
 });
-NeighborSuite('Create Neighborhood', async ({ neighborE2E }) => {
-  const addStep = neighborE2E.step('add');
+NeighborSuite('Create Neighborhood', async ({ e2e }) => {
+  const addStep = e2e.step('add');
   await addStep.spec(NeighborhoodConstants.specs.add).toss();
   addStep.clean(NeighborhoodConstants.specs.delete, {
     id: `$S{${NeighborhoodConstants.keys.id}}`,
   });
 });
-NeighborSuite('Get Neighborhood', async ({ neighborE2E }) => {
-  await neighborE2E
+NeighborSuite('Get Neighborhood', async ({ e2e }) => {
+  await e2e
     .step('Get Neighborhood')
     .spec()
     .get(`${route}/id/{id}`)
@@ -29,8 +29,8 @@ NeighborSuite('Get Neighborhood', async ({ neighborE2E }) => {
     })
     .toss();
 });
-NeighborSuite('Get Neighborhood By Name', async ({ neighborE2E }) => {
-  await neighborE2E
+NeighborSuite('Get Neighborhood By Name', async ({ e2e }) => {
+  await e2e
     .step('Get by name')
     .spec()
     .get(`${route}/name/{name}`)
@@ -43,8 +43,8 @@ NeighborSuite('Get Neighborhood By Name', async ({ neighborE2E }) => {
     })
     .toss();
 });
-NeighborSuite('Add another neighborhood', async ({ neighborE2E }) => {
-  const anotherNeighborhoodStep = neighborE2E.step('Add Another Neighborhood');
+NeighborSuite('Add another neighborhood', async ({ e2e }) => {
+  const anotherNeighborhoodStep = e2e.step('Add Another Neighborhood');
   await anotherNeighborhoodStep
     .spec(NeighborhoodConstants.specs.add, {
       key: 'Saddleclub',
@@ -58,18 +58,21 @@ NeighborSuite('Add another neighborhood', async ({ neighborE2E }) => {
       id: `$S{Saddleclub${NeighborhoodConstants.keys.id}}`,
     });
 });
-NeighborSuite('Get all Neighborhoods in N', async ({ neighborE2E }) => {
-  await neighborE2E
+NeighborSuite('Get all Neighborhoods in N', async ({ e2e }) => {
+  await e2e
     .step('Get all Neighborhoods in N')
     .spec()
     .get(`${route}/location/N`)
     .expectStatus(200)
-    .expectJsonLength(2)
     .expectJsonLike('[*].name', ['Test Neighborhood', 'Saddleclub'])
+    .expectJsonLike('[*].id', [
+      `$S{Saddleclub${NeighborhoodConstants.keys.id}}`,
+      `$S{${NeighborhoodConstants.keys.id}}`,
+    ])
     .toss();
 });
-NeighborSuite('Update Saddleclub to S', async ({ neighborE2E }) => {
-  await neighborE2E
+NeighborSuite('Update Saddleclub to S', async ({ e2e }) => {
+  await e2e
     .step('Update Neighborhood location')
     .spec()
     .patch(`${route}/{id}`)
@@ -78,8 +81,8 @@ NeighborSuite('Update Saddleclub to S', async ({ neighborE2E }) => {
     .expectStatus(200)
     .toss();
 });
-NeighborSuite('Get all Neighborhoods in N', async ({ neighborE2E }) => {
-  await neighborE2E
+NeighborSuite('Get all Neighborhoods in N', async ({ e2e }) => {
+  await e2e
     .step('Get all Neighborhoods in N')
     .spec()
     .get(`${route}/location/N`)
@@ -88,6 +91,6 @@ NeighborSuite('Get all Neighborhoods in N', async ({ neighborE2E }) => {
     .expectJsonLike('[*].name', ['Test Neighborhood'])
     .toss();
 });
-NeighborSuite('Cleanup', async ({ neighborE2E }) => {
-  await neighborE2E.cleanup();
+NeighborSuite('Cleanup', async ({ e2e }) => {
+  await e2e.cleanup();
 });

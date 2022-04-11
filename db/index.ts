@@ -22,7 +22,6 @@ const dbByEnv = {
     port: 35432,
   },
 };
-console.log(dbByEnv[process.env.NODE_ENV]);
 async function migrate() {
   const db = new Kysely<any>({
     dialect: new PostgresDialect(
