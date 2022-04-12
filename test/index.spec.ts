@@ -1,18 +1,17 @@
 import './steps';
 import './templates';
 
+import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { exec as cbExec } from 'child_process';
 import { request } from 'pactum';
+import { join } from 'path';
+import { promisify } from 'util';
+import { run as uvu } from 'uvu/run';
 
 import { AppModule } from '../src/app.module';
-
-import { NeighborSuite } from './neighborhood';
 import { getKyselyOptionsToken } from '../src/kysely';
-import { INestApplication } from '@nestjs/common';
-import { exec as cbExec } from 'child_process';
-import { exec as uvu } from 'uvu';
-import { promisify } from 'util';
-import { FamilySuite } from './family';
+import { parse } from 'uvu/parse';
 
 const exec = promisify(cbExec);
 
@@ -27,7 +26,6 @@ const runPostgres = async () => {
   let exitCode = 1;
   do {
     try {
-      console.log('Testing docker database connection');
       await exec('nc -z localhost 35432');
       const exit = (await exec('echo $?')).stdout.toString();
       exitCode = parseInt(exit);
@@ -35,6 +33,7 @@ const runPostgres = async () => {
       exitCode = 1;
     }
   } while (exitCode !== 0);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 };
 
 const runMigrations = async () => {
@@ -60,6 +59,17 @@ const setupApplication = async (): Promise<INestApplication> => {
   return modRef.createNestApplication();
 };
 
+const runUvu = async () => {
+  const uvuCtx = await parse(
+    join(process.cwd(), 'test'),
+    /(person|neighborhood|family)\.ts$/,
+    {
+      ignore: [/(templates|steps|constants)/],
+    },
+  );
+  await uvu(uvuCtx.suites, { bail: false });
+};
+
 const runTests = async () => {
   await runPostgres();
   await runMigrations();
@@ -67,10 +77,7 @@ const runTests = async () => {
   await app.listen(0);
   const url = await app.getUrl();
   request.setBaseUrl(url.replace('[::1]', 'localhost'));
-
-  NeighborSuite.run();
-  FamilySuite.run();
-  await uvu();
+  await runUvu();
   await app.close();
 };
 

@@ -97,3 +97,4 @@ NeighborSuite('Get all Neighborhoods in N', async ({ e2e }) => {
 NeighborSuite('Cleanup', async ({ e2e }) => {
   await e2e.cleanup();
 });
+NeighborSuite.run();

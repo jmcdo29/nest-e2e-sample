@@ -63,3 +63,4 @@ FamilySuite('Update Last Name', async ({ e2e }) => {
 FamilySuite('Clean up', async ({ e2e }) => {
   await e2e.cleanup();
 });
+FamilySuite.run();

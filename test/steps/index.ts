@@ -1,2 +1,3 @@
-import './neighborhood';
 import './family';
+import './neighborhood';
+import './person';
