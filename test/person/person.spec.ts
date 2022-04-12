@@ -1,12 +1,10 @@
 import { e2e as pactumE2E } from 'pactum';
 import E2E from 'pactum/src/models/E2E';
 import { suite } from 'uvu';
-import {
-  FamilyConstants,
-  NeighborhoodConstants,
-  PersonConstants,
-} from './constants';
-import { getStash } from './utils';
+import { FamilyConstants } from '../family';
+import { NeighborhoodConstants } from '../neighborhood';
+import { getStash } from '../utils';
+import { PersonConstants } from './person.constants';
 
 const PersonSuite = suite<{ e2e: E2E }>('Person Suite', {
   e2e: pactumE2E('Person Suite'),

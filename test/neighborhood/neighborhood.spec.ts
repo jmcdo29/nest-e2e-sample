@@ -1,8 +1,9 @@
 import { e2e as pactumE2E } from 'pactum';
 import E2E from 'pactum/src/models/E2E';
 import { suite } from 'uvu';
-import { NeighborhoodConstants, uuidRegex } from './constants';
-import { getStash } from './utils';
+import { uuidRegex } from '../constants';
+import { getStash } from '../utils';
+import { NeighborhoodConstants } from './neighborhood.constants';
 
 const route = NeighborhoodConstants.baseRoute;
 

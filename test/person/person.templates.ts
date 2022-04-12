@@ -1,5 +1,5 @@
 import { stash } from 'pactum';
-import { PersonConstants } from '../constants';
+import { PersonConstants } from './person.constants';
 
 stash.addDataTemplate({
   [PersonConstants.templates.new]: {

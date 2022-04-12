@@ -1,5 +1,5 @@
 import { stash } from 'pactum';
-import { FamilyConstants } from '../constants';
+import { FamilyConstants } from './family.constants';
 
 stash.addDataTemplate({
   [FamilyConstants.templates.new]: {

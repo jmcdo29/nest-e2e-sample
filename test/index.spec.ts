@@ -68,13 +68,9 @@ const setupApplication = async (): Promise<INestApplication> => {
 };
 
 const runUvu = async () => {
-  const uvuCtx = await parse(
-    join(process.cwd(), 'test'),
-    /(person|neighborhood|family)\.ts$/,
-    {
-      ignore: [/(templates|steps|constants)/],
-    },
-  );
+  const uvuCtx = await parse(join(process.cwd(), 'test'), /\.spec\.ts$/, {
+    ignore: [/(index)/],
+  });
   await uvu(uvuCtx.suites, { bail: false });
 };
 

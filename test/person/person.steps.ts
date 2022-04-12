@@ -1,12 +1,8 @@
 import { handler } from 'pactum';
-import {
-  FamilyConstants,
-  PersonConstants,
-  override,
-  template,
-  uuidRegex,
-} from '../../constants';
-import { getStash } from '../../utils';
+import { override, template, uuidRegex } from '../constants';
+import { FamilyConstants } from '../family';
+import { getStash } from '../utils';
+import { PersonConstants } from './person.constants';
 
 handler.addSpecHandler(PersonConstants.specs.add, ({ spec, data }) => {
   spec
@@ -21,4 +17,11 @@ handler.addSpecHandler(PersonConstants.specs.add, ({ spec, data }) => {
     .expectStatus(201)
     .expectJsonLike('.id', uuidRegex)
     .stores(`${data?.prefix ?? ''}${PersonConstants.keys.id}`, '.id');
+});
+handler.addSpecHandler(PersonConstants.specs.delete, ({ spec, data }) => {
+  spec
+    .delete(`${PersonConstants.baseRoutes}/{id}`)
+    .withPathParams({ id: data.id })
+    .expectStatus(200)
+    .expectJson({ success: true });
 });

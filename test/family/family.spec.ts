@@ -1,8 +1,10 @@
 import { e2e as pactumE2E } from 'pactum';
 import E2E from 'pactum/src/models/E2E';
 import { suite } from 'uvu';
-import { FamilyConstants, NeighborhoodConstants, uuidRegex } from './constants';
-import { getStash } from './utils';
+import { getStash } from '../utils';
+import { uuidRegex } from '../constants';
+import { NeighborhoodConstants } from '../neighborhood';
+import { FamilyConstants } from './family.constants';
 
 const route = FamilyConstants.baseRoute;
 export const FamilySuite = suite<{ e2e: E2E }>('Family E2E', {
