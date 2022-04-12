@@ -1,73 +1,104 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# NestJS E2E Test Sample
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a semi-decent fully fledged test example using [NestJS](https://github.com/nestjs/nest), [uvu](https://github.com/lukeed/uvu), and [PactumJS](https://github.com/pactumjs/pactum) as the means of testing in an E2E environment. [Kysely](https://github.com/koskimas/kysely) is used as the query runner/database connection manager, and I've added in my [ogma](https://github.com/jmcdo29/ogma) logger to show that the requests are being made to the server. 
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## The Goal
 
-## Description
+So we all kind aof know that [Jest](https://github.com/facebook/jest) and [Supertest](https://github.com/visionmedia/supertest) have been the defacto go tos when it comes to running tests and testing your API server, but I wanted something that has a little more oomph and usability, which is where `pactum` comes in.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Pactum is an HTTP request runner with way more capabilities than I'm about to mention here, but the big ones are data storage, dependent HTTP calls, response validation, and e2e step management, to the extent of also having the ability to run cleanup commands in a last in, first out manner. 
 
-## Installation
+uvu is an _extremely_ performant test runner, to the point of almost being unreal. Now, running uvu in a programmatic manner is a bit difficult and unwieldy, but not completely impossible. The API is also a bit different than Jest's so keep that in mind. 
 
-```bash
-$ npm install
+So the goal here is to show that we're able to spin up a Nest server once, have migrations run once, and have all of the tests run from a single file while being written in a common pattern, grouped by feature rather than by file type. I feel this comes into play especially when making use of pactum's features.
+
+## The Set Up
+
+I'm using [swc](https://github.com/swc-project/swc) to run uvu and migrations to let the typescript compile and run in memory. If you don't care for this, you can use `ts-node` or compile the code first.
+
+All of the test code is kicked off from the [`test/index.spec.ts`](./test/index.spec.ts) file. From there we call some `docker` commands to check if `docker compose` is running and Postgres is up, run the migrations runner file using the `test` environment, and start our Nest server, before running the tests. If all you're looking to do is run the tests and see it all works, just run `node -r @swc/register test/index.spec.ts`. The logs are a little messy due to `uvu`'s output using `process.stdout` just like `ogma` does, but that's the only problem I've really run into here.
+
+Other than that, I've created a database schema like so
+
+```ts
+import { Generated } from 'kysely';
+
+export enum Location {
+  N = 'N',
+  S = 'S',
+  W = 'W',
+  E = 'E',
+}
+
+export enum FamilyRole {
+  mother = 'mother',
+  father = 'father',
+  child = 'child',
+}
+
+export interface Neighborhood {
+  name: string;
+  id: Generated<string>;
+  location: Location;
+}
+
+export interface Family {
+  name: string;
+  id: Generated<string>;
+  neighborhood_id: string;
+}
+
+export interface Person {
+  name: string;
+  id: Generated<string>;
+  role: FamilyRole;
+  family_id: string;
+}
+
+export interface Database {
+  neighborhood: Neighborhood;
+  family: Family;
+  person: Person;
+}
 ```
 
-## Running the app
+A very simple database with three tables all relating to the one that came before it just to show it all works out and to get some nice experience with kysely.
 
-```bash
-# development
-$ npm run start
+For the most part the code is all pretty straightforward and easy to read through.
 
-# watch mode
-$ npm run start:dev
+## Fun things to point out
 
-# production mode
-$ npm run start:prod
+Around line 53 of the `test/index.spec.ts` file:
+
+```ts
+const setupApplication = async (): Promise<INestApplication> => {
+  ogma.debug('Creating Nest application');
+  const modRef = await Test.createTestingModule({
+    imports: [AppModule],
+  })
+    .overrideProvider(getKyselyOptionsToken())
+    .useValue({
+      port: 35432,
+      host: 'localhost',
+      user: 'postgres',
+      password: 'postgres',
+      database: 'test',
+    })
+    .compile();
+  return modRef.createNestApplication();
+};
 ```
 
-## Test
+By making the kysely options an injectable token, it made it easy to change what database we're pointing at for the test environment.
 
-```bash
-# unit tests
-$ npm run test
+Both the `family.step.ts` and the `person.step.ts` files show just how easy and powerful the pactum data templates can be in terms of working with re-usable template data while also providing overrides for particular values, and show off some of the stash capabilities of pactum as well.
 
-# e2e tests
-$ npm run test:e2e
+The neighborhood.spec.ts file shows off a nice use of the `expectJsonLike` handler so that you don't need a perfect JSON match (like if you have tests running parallel) and the `person.spec.ts` file shows how you can use the stash data inside an `expectJsonLike` to provide it's usable practically anywhere.
 
-# test coverage
-$ npm run test:cov
+## Generating Coverage
+
+If you want to see the coverage outcome you can use [c8](https://github.com/bcoe/c8) which is installed in this application. Just run
+
+```sh
+pnpm exec c8 node -r @swc/register test/index.spec.ts
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
