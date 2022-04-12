@@ -7,6 +7,9 @@ specifiers:
   '@nestjs/platform-express': ^8.0.0
   '@nestjs/schematics': ^8.0.0
   '@nestjs/testing': ^8.0.0
+  '@ogma/logger': ^2.2.0
+  '@ogma/nestjs-module': ^3.2.0
+  '@ogma/platform-express': ^3.0.1
   '@swc/core': ^1.2.163
   '@swc/register': ^0.1.10
   '@types/express': ^4.17.13
@@ -35,6 +38,9 @@ dependencies:
   '@nestjs/common': 8.4.3_e7ea248743279784063e3708d703abc5
   '@nestjs/core': 8.4.3_c2aa74453c5108161d7d668927d51cc5
   '@nestjs/platform-express': 8.4.3_2da8a9968be4406723e870d9d23c8df0
+  '@ogma/logger': 2.2.0
+  '@ogma/nestjs-module': 3.2.0_a2dbd976216bca99360ba5040550d5c7
+  '@ogma/platform-express': 3.0.1_498e6a7cb556a0bcc1da051d2e042e6e
   kysely: 0.17.1
   pg: 8.7.3
   reflect-metadata: 0.1.13
@@ -235,6 +241,17 @@ packages:
   /@exodus/schemasafe/1.0.0-rc.6:
     resolution: {integrity: sha512-dDnQizD94EdBwEj/fh3zPRa/HWCS9O5au2PuHhZBbuM3xWHxuaKzPBOEWze7Nn0xW68MIpZ7Xdyn1CoCpjKCuQ==}
     dev: true
+
+  /@golevelup/nestjs-modules/0.5.0_@nestjs+common@8.4.3+rxjs@7.5.5:
+    resolution: {integrity: sha512-6ZGjPtm0KwJ7Txa3Z14IzILi7pfvGrLZHv/q9/4tt7T5ngcCe71wJp32TG0/b3UkJX3/LEm4AtYjcfwiIrfSlg==}
+    peerDependencies:
+      '@nestjs/common': ^8.x
+      rxjs: ^7.x
+    dependencies:
+      '@nestjs/common': 8.4.3_e7ea248743279784063e3708d703abc5
+      lodash: 4.17.21
+      rxjs: 7.5.5
+    dev: false
 
   /@humanwhocodes/config-array/0.9.5:
     resolution: {integrity: sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw==}
@@ -446,6 +463,63 @@ packages:
       node-fetch: 2.6.7
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /@ogma/common/1.0.0:
+    resolution: {integrity: sha512-IXvSnXbXccpxJR+UbN2fxp30R/44VFpx/T0ungb1PMwLa9BLmtbeQIXqc9TR11gRaDNY0e78tqVckau8oyXK0A==}
+    dev: false
+
+  /@ogma/logger/2.1.0:
+    resolution: {integrity: sha512-MzsbAuOPfMLEwACJkMxjFiUKhmdoArmiqRitDW//5vrLy6E8BSojKW5jY1ml2kzLZBYhTsCR+31QF/ImjfSPBA==}
+    engines: {node: '>=10'}
+    dependencies:
+      '@ogma/common': 1.0.0
+      '@ogma/styler': 1.0.0
+    dev: false
+
+  /@ogma/logger/2.2.0:
+    resolution: {integrity: sha512-AWNs1wYjjMREyiro5F5di3pJcwaST/jV/2Dx7SFYLNTGZzZO5qWSsUidu4gBLFzGANyhxeLuJYyXAp/QivIRCA==}
+    engines: {node: '>=10'}
+    dependencies:
+      '@ogma/common': 1.0.0
+      '@ogma/styler': 1.0.0
+    dev: false
+
+  /@ogma/nestjs-module/3.2.0_a2dbd976216bca99360ba5040550d5c7:
+    resolution: {integrity: sha512-/pP+wZ2AfP+pnDXt8XMISjazwSz50m9xNUFaW7JE6q84SNFLojVA0+skPUbwnWjq0SXpcHd8mAk+KTZVnYjSIw==}
+    peerDependencies:
+      '@nestjs/common': ^8.0.0
+      '@nestjs/core': ^8.0.0
+      reflect-metadata: ^0.1.0
+      rxjs: ^7.0.0
+    dependencies:
+      '@golevelup/nestjs-modules': 0.5.0_@nestjs+common@8.4.3+rxjs@7.5.5
+      '@nestjs/common': 8.4.3_e7ea248743279784063e3708d703abc5
+      '@nestjs/core': 8.4.3_c2aa74453c5108161d7d668927d51cc5
+      '@ogma/common': 1.0.0
+      '@ogma/logger': 2.2.0
+      '@ogma/styler': 1.0.0
+      reflect-metadata: 0.1.13
+      rxjs: 7.5.5
+    dev: false
+
+  /@ogma/platform-express/3.0.1_498e6a7cb556a0bcc1da051d2e042e6e:
+    resolution: {integrity: sha512-DKQxD0A+mcjxv79jtuIOFfP5U0VszB5BLw4sLu1FXlCi58s0I5pt7AYrgqkOjb3xVBTRpyQTeRc+v2QuYrbRNw==}
+    peerDependencies:
+      '@nestjs/platform-express': ^8.0.0
+      '@ogma/nestjs-module': ^3.0.0
+    dependencies:
+      '@nestjs/platform-express': 8.4.3_2da8a9968be4406723e870d9d23c8df0
+      '@ogma/common': 1.0.0
+      '@ogma/logger': 2.1.0
+      '@ogma/nestjs-module': 3.2.0_a2dbd976216bca99360ba5040550d5c7
+      '@ogma/styler': 1.0.0
+    dev: false
+
+  /@ogma/styler/1.0.0:
+    resolution: {integrity: sha512-Twtijg2eUS4HEPyic0FEpkdJgRtLSvVow/3gmLsMkyU+GhSm80PnRlc6q1N1rmf1EQhuwGZLKhS30sYIuFV38A==}
+    dependencies:
+      '@ogma/common': 1.0.0
     dev: false
 
   /@polka/url/0.5.0:
@@ -2375,7 +2449,6 @@ packages:
 
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: true
 
   /log-symbols/4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
