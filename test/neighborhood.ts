@@ -2,6 +2,7 @@ import { e2e as pactumE2E } from 'pactum';
 import E2E from 'pactum/src/models/E2E';
 import { suite } from 'uvu';
 import { NeighborhoodConstants, uuidRegex } from './constants';
+import { getStash } from './utils';
 
 const route = NeighborhoodConstants.baseRoute;
 
@@ -12,7 +13,7 @@ NeighborSuite('Create Neighborhood', async ({ e2e }) => {
   const addStep = e2e.step('add');
   await addStep.spec(NeighborhoodConstants.specs.add).toss();
   addStep.clean(NeighborhoodConstants.specs.delete, {
-    id: `$S{${NeighborhoodConstants.keys.id}}`,
+    id: getStash(NeighborhoodConstants.keys.id),
   });
 });
 NeighborSuite('Get Neighborhood', async ({ e2e }) => {
@@ -20,12 +21,12 @@ NeighborSuite('Get Neighborhood', async ({ e2e }) => {
     .step('Get Neighborhood')
     .spec()
     .get(`${route}/id/{id}`)
-    .withPathParams({ id: `$S{${NeighborhoodConstants.keys.id}}` })
+    .withPathParams({ id: getStash(NeighborhoodConstants.keys.id) })
     .expectStatus(200)
     .expectBody({
       name: 'Test Neighborhood',
       location: 'N',
-      id: `$S{${NeighborhoodConstants.keys.id}}`,
+      id: getStash(NeighborhoodConstants.keys.id),
     })
     .toss();
 });
@@ -55,7 +56,7 @@ NeighborSuite('Add another neighborhood', async ({ e2e }) => {
     })
     .toss(),
     anotherNeighborhoodStep.clean(NeighborhoodConstants.specs.delete, {
-      id: `$S{Saddleclub${NeighborhoodConstants.keys.id}}`,
+      id: getStash(`Saddleclub${NeighborhoodConstants.keys.id}`),
     });
 });
 NeighborSuite('Get all Neighborhoods in N', async ({ e2e }) => {
@@ -66,8 +67,8 @@ NeighborSuite('Get all Neighborhoods in N', async ({ e2e }) => {
     .expectStatus(200)
     .expectJsonLike('[*].name', ['Test Neighborhood', 'Saddleclub'])
     .expectJsonLike('[*].id', [
-      `$S{Saddleclub${NeighborhoodConstants.keys.id}}`,
-      `$S{${NeighborhoodConstants.keys.id}}`,
+      getStash(`Saddleclub${NeighborhoodConstants.keys.id}`),
+      getStash(`${NeighborhoodConstants.keys.id}`),
     ])
     .toss();
 });
@@ -77,7 +78,9 @@ NeighborSuite('Update Saddleclub to S', async ({ e2e }) => {
     .spec()
     .patch(`${route}/{id}`)
     .withJson({ location: 'S' })
-    .withPathParams({ id: `$S{Saddleclub${NeighborhoodConstants.keys.id}}` })
+    .withPathParams({
+      id: getStash(`Saddleclub${NeighborhoodConstants.keys.id}`),
+    })
     .expectStatus(200)
     .toss();
 });

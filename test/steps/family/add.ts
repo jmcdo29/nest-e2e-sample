@@ -5,6 +5,7 @@ import {
   override,
   template,
 } from '../../constants';
+import { getStash } from '../../utils';
 
 handler.addSpecHandler(FamilyConstants.specs.add, ({ spec, data }) => {
   spec
@@ -12,7 +13,7 @@ handler.addSpecHandler(FamilyConstants.specs.add, ({ spec, data }) => {
     .withJson({
       [template]: FamilyConstants.templates.new,
       [override]: {
-        neighborhood_id: `$S{Family${NeighborhoodConstants.keys.id}}`,
+        neighborhood_id: getStash(`Family${NeighborhoodConstants.keys.id}`),
         ...(data?.overrides ?? {}),
       },
     })
