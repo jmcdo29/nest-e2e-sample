@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
-    "@nestjs/core": "^8.0.0",
+    "@nestjs/core": "^9.0.5",
     "@nestjs/platform-express": "^8.0.0",
     "@ogma/logger": "^2.2.0",
     "@ogma/nestjs-module": "^3.2.0",
